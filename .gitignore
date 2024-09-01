@@ -1,162 +1,58 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+def find_points(matrix):
+    start = None
+    end = None
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            if matrix[i][j] == 'I':
+                start = (i, j)
+            elif matrix[i][j] == 'F':
+                end = (i, j)
+    return start, end
 
-# C extensions
-*.so
+def dfs(matrix, x, y, cost, path, all_paths):
+    # Verificar límites y si la celda ha sido visitada
+    if not (0 <= x < len(matrix) and 0 <= y < len(matrix[0])) or matrix[x][y] is None:
+        return
+    # Llegada al destino
+    if matrix[x][y] == 'F':
+        all_paths.append((cost, path + [(x, y)]))
+        return
+    # Si es un número, continuar explorando
+    if isinstance(matrix[x][y], int) or matrix[x][y] == 'I':
+        current_value = matrix[x][y]
+        matrix[x][y] = None  # Marcar como visitado
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Movimientos posibles
+            dfs(matrix, x + dx, y + dy, cost + (current_value if current_value != 'I' else 0), path + [(x, y)], all_paths)
+        matrix[x][y] = current_value  # Desmarcar para otras rutas
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+def find_min_max_cost_paths(matrix):
+    start, end = find_points(matrix)
+    all_paths = []
+    dfs(matrix, start[0], start[1], 0, [], all_paths)
+    
+    min_path = min(all_paths, key=lambda x: x[0]) if all_paths else (None, None)
+    max_path = max(all_paths, key=lambda x: x[0]) if all_paths else (None, None)
+    
+    return min_path, max_path
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Representación de la matriz basada en la imagen proporcionada
+matrix = [
+    [-3, -3, 2, -3, -3, -2, 1, 2, 0, 2, 0, 0, 1],
+    [2, 3, 'I', -1, -1, 3, 2, 0, -3, -3, 2, 2, 1],
+    [1, -3, -3, 2, 1, -3, -3, 2, 1, -2, 2, 3, -3],
+    [0, 0, 3, 0, -3, -3, -3, 0, 2, 2, 1, 1, -3],
+    [2, -1, -3, 3, 0, 3, 1, -2, 2, 0, 1, -2, 0],
+    [0, 3, -1, -1, 2, -2, 2, 2, 1, -2, -3, 0, -2],
+    [0, 3, 2, 0, 1, 1, 2, 3, -1, -3, 0, 0, -2],
+    [3, -3, -3, -3, -3, -1, -3, 3, 3, 2, -2, -1, -3],
+    [-2, -2, 1, 0, 0, 3, 0, 2, 2, -2, -3, -1, 1],
+    [-3, 3, 0, -1, 3, 1, -2, 3, 0, 3, 2, -2, 0],
+    [-3, -3, 3, 3, -3, 0, -2, -3, 1, 0, -1, 2, 1],
+    [-1, 0, 1, 2, 'F', 0, -3, 3, 3, -2, -1, -3, 2],
+    [1, -3, 1, 0, 1, 2, 3, 3, 0, 3, 2, 3, 0]
+]
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+min_path, max_path = find_min_max_cost_paths(matrix)
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-.pybuilder/
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
-
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
-
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/latest/usage/project/#working-with-version-control
-.pdm.toml
-.pdm-python
-.pdm-build/
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+print("Ruta de menor costo:", min_path)
+print("Ruta de mayor costo:", max_path)
