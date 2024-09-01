@@ -34,22 +34,9 @@ A continuación se muestra la matriz utilizada en este proyecto:
 
 - Python 3.7 o superior
 
-## Instalación
-
-1. **Clona este repositorio**:
-   ```bash
-   git clone https://github.com/tu_usuario/tu_repositorio.git
-   cd tu_repositorio
-
-   python -m venv env
-source env/bin/activate  # En Windows usa `env\Scripts\activate`
-
-pip install -r requirements.txt
 
 
-Uso
-
-	1.	Ejecuta el script principal:
+	1.	Ejecutar el script principal:
  python main.py
 
 
